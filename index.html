@@ -298,8 +298,8 @@
         // Link
         let td5  = document.createElement("td");
         let td5c = document.createElement("a");
-            if (contest.id > 99999) td5c.href = `http://codeforces.com/gym/${contest.id}/virtual`;
-            else                    td5c.href = `http://codeforces.com/contestRegistration/${contest.id}/virtual/true`;
+            if (contest.id > 99999) td5c.href = `https://codeforces.com/gym/${contest.id}/virtual`;
+            else                    td5c.href = `https://codeforces.com/contestRegistration/${contest.id}/virtual/true`;
             td5c.target = "_blank";
         let td5d = document.createTextNode("Ir");
             td5c.appendChild(td5d)
@@ -339,7 +339,7 @@
       }
 
       function loadContestList() {
-        fetch('http://codeforces.com/api/contest.list?gym=true')
+        fetch('https://codeforces.com/api/contest.list?gym=true')
         .then(function(response) {
           return response.json();
         })
@@ -350,7 +350,7 @@
             list[contest.id].noContestants = 0;
           });
 
-          fetch('http://codeforces.com/api/contest.list?gym=false')
+          fetch('https://codeforces.com/api/contest.list?gym=false')
           .then(function(response) {
             return response.json();
           })
@@ -452,7 +452,7 @@
           return;
         }
 
-        let url = `http://codeforces.com/api/user.status?handle=${usrName}`;
+        let url = `https://codeforces.com/api/user.status?handle=${usrName}`;
         fetch(url)
         .then(function(response) {
           return response.json();
