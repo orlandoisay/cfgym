@@ -1,0 +1,514 @@
+<html>
+  <head>
+    <!-- CF GYM SELECTOR V1.0 -->
+    <title>CF GYM Selector</title>
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Source Sans Pro', sans-serif;
+      }
+
+      body {
+        padding-top: 60px;
+      }
+
+      h1 {
+        font-weight: normal;
+      }
+
+      header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+
+        height: 60px;
+        background: #2196F3;
+        box-shadow: 0 1px 5px rgb(134, 134, 134);
+        text-align: center;
+      }
+
+      header h1 {
+        color: white;
+      }
+
+      div.header-title {
+        display: flex;  
+        height: 100%;      
+
+        justify-content: center;
+        align-items: center;
+      }
+
+      div.wrapper {
+        width: 960px;
+        margin: auto;
+      }
+
+      div.top-nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      div.add-user {
+        padding: 20px;
+      }
+
+      div.add-user input[type="text"] {
+        width: 100%;
+        padding: 10px 30px;
+        border: none;
+        border: 2px solid #c0c0c0;
+        border-radius: 24px;
+        font-size: 18px;
+      }
+
+      div.add-user input[type="text"]:focus {
+        outline: none;
+      }
+
+      div.user-list {
+        padding: 0 20px;
+      }
+
+      div.user-list ul li {
+        list-style: none;
+        display: inline-block;
+        margin-right: 5px;
+        margin-bottom: 5px;
+        padding: 5px 15px;
+        background: gray;
+        height: 32px;
+        border-radius: 16px;
+        color: white;
+        transition: all 0.3s ease-in;
+      }
+
+      div.user-list ul li:before {
+        display: inline-block;
+        content: '×';
+        margin-right: 5px;
+        transition: all 0.3s ease-in;
+      }
+
+      div.user-list ul li:hover {
+        box-shadow: 0px 2px 2px rgba(0,0,0,.25);
+        z-index: 1;
+        transform: scale(1.2);
+      }
+
+      div.user-list ul li:hover:before {
+        transform: rotateZ(360deg);
+      }
+
+      div.user-list ul li.plus { background: #2196f3; }
+      
+      div.user-list ul li.minus { background: #e91e63; }
+
+      div.contest-count {
+        margin-right: 20px;
+        margin-bottom: 5px;
+        padding: 5px 25px;
+        background: gray;
+        height: 32px;
+        border-radius: 16px;
+        color: white;
+        transition: all 0.3s ease-in;
+        overflow: hidden;
+      }
+
+      div.results {
+        margin-top: 10px;
+        padding: 0 20px;
+      }
+
+      div.results table {
+        width: 100%;
+        border-spacing: 0 8px;
+        border-collapse: separate; 
+        margin-bottom: 20px;
+      }
+
+      div.results table thead {
+        background: #2196f3;
+        border-radius: 5px;
+        color: white;
+      }      
+
+      div.results table thead tr {
+        box-shadow: 0 2px 3px rgba(0,0,0,0.15);
+      }
+
+      div.results table thead tr th {
+        padding: 12px;
+      }
+
+      div.results table tbody {
+        color: #303030;
+      }
+  
+      div.results table tbody tr {
+        background: red;
+        border-spacing: 10px;
+      }
+
+      div.results table tbody tr td {
+        padding: 10px;
+        text-align: center;
+        background: white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+      }
+
+      div.results table tbody tr td a {
+        font-weight: bold;
+        text-decoration: none;
+        color: #404040;
+      }
+
+      div.loading-screen {
+        position: fixed;
+        top: 60px;
+        left: 0;
+        background: rgba(0,0,0,0.75);
+        width: 100%;
+        height: 100%;
+        z-index: 5px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        display: none;
+      }
+    </style>
+    <style>
+      .lds-ripple {
+        display: inline-block;
+        position: relative;
+        width: 64px;
+        height: 64px;
+      }
+      .lds-ripple div {
+        position: absolute;
+        border: 4px solid #fff;
+        opacity: 1;
+        border-radius: 50%;
+        animation: lds-ripple 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+      }
+      .lds-ripple div:nth-child(2) {
+        animation-delay: -0.5s;
+      }
+      @keyframes lds-ripple {
+        0% {
+          top: 28px;
+          left: 28px;
+          width: 0;
+          height: 0;
+          opacity: 1;
+        }
+        100% {
+          top: -1px;
+          left: -1px;
+          width: 58px;
+          height: 58px;
+          opacity: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="wrapper header-title">
+        <h1>CF GYM Selector</h1>
+      </div>
+    </header>
+
+    <div class="wrapper">
+      <div class="add-user">
+        <input type="text" id="add-user">  
+      </div>  
+    </div>
+
+    <div class="wrapper">
+      <div class="top-nav">
+        <div class="user-list">
+          <ul id="user-list">
+          </ul>
+        </div>
+        <div class="contest-count" id="contest-count">
+          0 concursos
+        </div>
+      </div>
+      <div class="results">
+        <table>
+          <thead>
+            <tr>
+              <th>Id</th>
+              <th>Concurso</th>              
+              <th>Dificultad</th>
+              <th>Participantes</th>
+              <th>Link</th>
+            </tr>  
+          </thead>
+          <tbody id="tbl-body">
+          </tbody>
+        </table>
+      </div>  
+    </div>
+
+    <div class="loading-screen" id="scr-load">
+      <div class="lds-ripple"><div></div><div></div></div>
+    </div>
+    
+    <script>
+      let tblBody = document.getElementById('tbl-body');
+      let txtUser = document.getElementById('add-user');
+      let scrLoad = document.getElementById('scr-load');
+      let usrList = document.getElementById('user-list');
+
+      let contestCount = document.getElementById('contest-count');
+
+      let list = [], userList = [];
+
+      function createRow(contest) {
+        let node = document.createElement("tr");
+
+        // Id
+        let td1  = document.createElement("td");
+        let td1c = document.createTextNode(contest.id);
+            td1.appendChild(td1c);
+
+        // Nombre
+        let td2  = document.createElement("td");
+        let td2c = document.createTextNode(contest.name);
+            td2.appendChild(td2c);
+
+        // Dificultad
+        let td3  = document.createElement("td");
+        let td3c = document.createTextNode(contest.difficulty || "-");
+            td3.appendChild(td3c);
+
+        // Participantes
+        let td4  = document.createElement("td");
+        let td4c = document.createTextNode(contest.contestants);
+            td4.appendChild(td4c);            
+
+        // Link
+        let td5  = document.createElement("td");
+        let td5c = document.createElement("a");
+            if (contest.id > 99999) td5c.href = `http://codeforces.com/gym/${contest.id}/virtual`;
+            else                    td5c.href = `http://codeforces.com/contestRegistration/${contest.id}/virtual/true`;
+            td5c.target = "_blank";
+        let td5d = document.createTextNode("Ir");
+            td5c.appendChild(td5d)
+            td5.appendChild(td5c);            
+
+        node.appendChild(td1);
+        node.appendChild(td2);
+        node.appendChild(td3);
+        node.appendChild(td4);
+        node.appendChild(td5);
+
+        return node;
+      }
+
+      function displayContestList() {
+        tblBody.innerHTML = "";
+
+        let displayList = []
+        list.forEach(function(contest) { 
+          if (contest.contestants == 0) return;
+          if (contest.noContestants > 0) return;
+          displayList.push(contest);
+        });
+
+        displayList.sort(function(a, b) {
+          if (a.contestants == b.contestants) 
+            return a.id - b.id;
+          return b.contestants - a.contestants;
+        });
+
+        contestCount.innerText = `${displayList.length} Concursos`;
+
+        displayList.forEach(function(contest) { 
+          let contestRow = createRow(contest);
+            tblBody.appendChild(contestRow);
+        });
+      }
+
+      function loadContestList() {
+        fetch('http://codeforces.com/api/contest.list?gym=true')
+        .then(function(response) {
+          return response.json();
+        })
+        .then(function(data) {
+          data.result.forEach(function(contest) {
+            list[contest.id] = contest;
+            list[contest.id].contestants = 0;
+            list[contest.id].noContestants = 0;
+          });
+
+          fetch('http://codeforces.com/api/contest.list?gym=false')
+          .then(function(response) {
+            return response.json();
+          })
+          .then(function(data) {
+            data.result.forEach(function(contest) {
+              list[contest.id] = contest;
+              list[contest.id].contestants = 0;
+              list[contest.id].noContestants = 0;
+
+              displayContestList();
+              hideLoadingScreen();
+
+            });
+          })
+          .catch(function(err) {
+            console.log("FATAL ERROR!");
+          });
+        })
+        .catch(function(err) {
+          console.log("FATAL ERROR!");
+        });
+      }
+
+      function showLoadingScreen() {
+        scrLoad.style.display = "flex";
+      }
+
+      function hideLoadingScreen() {
+        scrLoad.style.display = "none";
+      }
+
+      function deleteUserLi(usrName, usrCode) {
+        showLoadingScreen();
+
+        let id = `usr-li-${usrName}-${usrCode}`;
+
+        for (let i = 0; i < usrList.childElementCount; i++) {
+          let li = usrList.children[i];
+
+          if (li.id == id) {
+            usrList.removeChild(li);
+
+            if (usrCode == "plus") {
+              userList[usrName].forEach(function(c, id) { 
+                if(list[id] == undefined) return;
+                list[id].contestants--;
+              });
+            } else if (usrCode == "minus"){
+              userList[usrName].forEach(function(c, id) { 
+                if(list[id] == undefined) return;
+                list[id].noContestants--;
+              });
+            }
+            break;            
+          }
+        }    
+
+        displayContestList();
+        hideLoadingScreen();    
+      }
+
+      function createUserLi(usrName, usrCode) {
+        let li  = document.createElement("li");
+        let lit = document.createTextNode(usrName);
+        
+        li.appendChild(lit);
+        li.className = usrCode;
+        li.id = `usr-li-${usrName}-${usrCode}`;
+
+        li.addEventListener("click", function() {
+          deleteUserLi(usrName, usrCode);
+        });
+
+        usrList.appendChild(li);
+      }
+
+      function addUserData(usrName, usrCode) {
+        if (usrCode == "plus") {
+          userList[usrName].forEach(function(c, id) { 
+            if(list[id] == undefined) return;
+            list[id].contestants++;
+          });
+        } else if (usrCode == "minus") {
+          userList[usrName].forEach(function(c, id) { 
+            if(list[id] == undefined) return;
+            list[id].noContestants++;
+          });
+        } 
+      }
+
+      function addUser(usrName, usrCode) {
+        createUserLi(usrName, usrCode);
+
+        if (userList[usrName]) {
+          addUserData(usrName, usrCode);
+
+          displayContestList();
+          hideLoadingScreen();
+          return;
+        }
+
+        let url = `http://codeforces.com/api/user.status?handle=${usrName}`;
+        fetch(url)
+        .then(function(response) {
+          return response.json();
+        })
+        .then(function(data) {
+          if(data.status != "OK") {
+            // TODO: ADD DIALOG WITH ERROR MESSAGE
+            hideLoadingScreen();
+            return;
+          } 
+
+          userList[usrName] = [];
+
+          for(let i=0;i<data.result.length;i++) {
+            if(data.result[i].author.participantType == "VIRTUAL" ||
+               data.result[i].author.participantType == "CONTESTANT") 
+              userList[usrName][data.result[i].contestId] = true;
+          }
+
+          addUserData(usrName, usrCode);
+
+          displayContestList();
+          hideLoadingScreen();
+        });
+      }
+
+      function process(input) {
+        let usrCode = "plus";
+        let usrName = input;
+
+        let hasCode = input.search(":") != -1;
+
+        if (hasCode) {
+          let elem = input.split(":");
+
+          if(elem.length != 2) return;
+          if(elem[0].search("m") != -1)
+            usrCode = "minus";
+          usrName = elem[1];
+        }
+
+        addUser(usrName,usrCode);
+      }
+
+      showLoadingScreen();
+      loadContestList();
+
+      txtUser.addEventListener("keypress", function(e) { 
+        if(e.key == "Enter") {
+          let input = txtUser.value;
+          txtUser.value = "";
+          showLoadingScreen();
+          process(input);
+        }
+      });
+
+    </script>
+  </body>
+</html>
